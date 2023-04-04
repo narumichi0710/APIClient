@@ -15,38 +15,34 @@ public protocol APIRequest {
 
 extension APIRequest {
     
-    public func urlRequest(
-        baseURL: String,
-        headerFields: [String: String]
-    ) async throws -> URLRequest {
-        
-        var urlBuilder = URLBuilder(baseURL: baseURL)
-        urlBuilder.appendPathComponent(path)
-        urlBuilder.setQueryParameters(queryParameters)
+    public func urlRequest(baseURL: URL, headerFields: [String: String]) async throws -> URLRequest {
+       let url = baseURL.appendingPathComponent(path)
+       guard var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true) else {
+           throw APIError.serverError
+       }
+       if let queryParameters = queryParameters {
+           urlComponents.queryItems = queryParameters.map {
+               URLQueryItem(name: $0.key, value: $0.value)
+           }
+       }
+       guard let urlWithComponents = urlComponents.url else {
+           throw APIError.serverError
+       }
+       var urlRequest = URLRequest(url: urlWithComponents)
+       urlRequest.httpMethod = method.rawValue
 
-        var request = URLRequest(url: try urlBuilder.url)
-        request.httpMethod = method.rawValue
-
-        if let body = body {
-            request.httpBody = try await JSONEncoder().encode(body)
-            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        }
-
-        for (field, value) in headerFields {
-            request.addValue(value, forHTTPHeaderField: field)
-        }
-
-        return request
-    }
-
+       if let body = body {
+           urlRequest.httpBody = try JSONEncoder().encode(body)
+           urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+       }
+       for (field, value) in headerFields {
+           urlRequest.addValue(value, forHTTPHeaderField: field)
+       }
+       return urlRequest
+   }
+    
+    
     public func response(from data: Data) throws -> Response {
         return try JSONDecoder().decode(Response.self, from: data)
     }
-}
-
-public enum HTTPMethod: String {
-    case get = "GET"
-    case post = "POST"
-    case put = "PUT"
-    case delete = "DELETE"
 }

@@ -33,16 +33,13 @@ extension APIClient {
     
     /// リクエスト送信 / 受信処理
     public func send<Request: APIRequest>(_ request: Request) async throws -> Request.Response {
-        let urlRequest = try await request.urlRequest(
-            baseURL: baseURL,
-            headerFields: headerFields
-        )
+        let urlRequest = try await request.urlRequest(baseURL: baseURL, headerFields: headerFields)
         let (data, response) = try await session.data(for: urlRequest)
         guard let httpResponse = response as? HTTPURLResponse else {
-            throw APIError.emptyResponse
+            throw APIError.noResponse
         }
         guard 200..<300 ~= httpResponse.statusCode else {
-            throw APIError.networkError(statusCode: httpResponse.statusCode)
+            throw APIError.other(httpResponse.description)
         }
         return try request.response(from: data)
     }
