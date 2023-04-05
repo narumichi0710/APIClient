@@ -11,8 +11,11 @@ public protocol APIRequest {
     var path: String { get }
     var body: Encodable? { get }
     var queryParameters: [String: String]? { get }
-    func urlRequest(baseURL: URL, headerFields: [String: String]) throws -> URLRequest
-    func response(from data: Data) throws -> Response
+}
+
+extension APIRequest {
+    public var body: Encodable? { nil }
+    public var queryParameters: [String: String]? { nil }
 }
 
 extension APIRequest {
@@ -43,6 +46,7 @@ extension APIRequest {
       for (field, value) in headerFields {
           urlRequest.addValue(value, forHTTPHeaderField: field)
       }
+      debugPrint("API Request: \(urlRequest)")
       return urlRequest
     }
 
