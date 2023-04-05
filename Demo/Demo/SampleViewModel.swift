@@ -5,8 +5,7 @@
 //  Created by Narumichi Kubo on 2023/04/05.
 //
 
-
-import Foundation
+import SwiftUI
 
 public class SampleViewModel: ObservableObject {
     private let apiClient: SampleClient
