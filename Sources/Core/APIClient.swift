@@ -6,13 +6,9 @@ import Foundation
 
 // API通信用プロトコル
 public protocol APIClient {
-    /// ベースURL
-    var baseURL: String { get }
-    /// ヘッダーフィールド
+    var baseURL: URL { get }
     var headerFields: [String: String] { get }
-    /// テスト用に定義
     var session: URLSession { get }
-    /// テスト用に定義
     func send<Request: APIRequest>(_ request: Request) async throws -> Request.Response
 }
 
@@ -30,7 +26,6 @@ extension APIClient {
 }
 
 extension APIClient {
-    
     /// リクエスト送信 / 受信処理
     public func send<Request: APIRequest>(_ request: Request) async throws -> Request.Response {
         let urlRequest = try await request.urlRequest(baseURL: baseURL, headerFields: headerFields)
