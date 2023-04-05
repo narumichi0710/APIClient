@@ -14,13 +14,13 @@ public protocol APIClient {
 
 // 必要に応じて変更
 extension APIClient {
-    var baseURL: URL {
+    public var baseURL: URL {
         URL(string: "https://api.github.com")!
     }
-    var headerFields: [String: String] {
+    public var headerFields: [String: String] {
         ["Accept": "application/json"]
     }
-    var session: URLSession {
+    public var session: URLSession {
         .shared
     }
 }
@@ -34,7 +34,9 @@ extension APIClient {
             throw APIError.noResponse
         }
         guard 200..<300 ~= httpResponse.statusCode else {
-            throw APIError.other(httpResponse.description)
+            let errorResponse = try? JSONDecoder().decode(APIError.Message.self, from: data)
+            debugPrint("API Error: \(String(describing: errorResponse?.message)) ErrorCode: \(httpResponse.statusCode)")
+            throw APIError.serverError
         }
         return try request.response(from: data)
     }
