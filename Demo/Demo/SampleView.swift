@@ -10,7 +10,7 @@ import SwiftUI
 public struct SampleView: View {
     @StateObject private var viewModel: SampleViewModel
     
-    public init(viewModel: SampleViewModel = .init(apiClient: .init())) {
+    public init(viewModel: SampleViewModel = .init(apiClient: .live)) {
         _viewModel = .init(wrappedValue: viewModel)
     }
     

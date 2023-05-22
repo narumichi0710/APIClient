@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import APIClient
 
 public struct SampleModel: Decodable, Equatable {
     public var totalCount: Int

@@ -14,21 +14,23 @@ public class SampleViewModel: ObservableObject {
     @Published public var searchText: String = ""
     @Published public var errorMessage: String?
     
-    public init(apiClient: SampleClient) {
+    public init(
+        searchText: String = "",
+        apiClient: SampleClient
+    ) {
         self.apiClient = apiClient
     }
     
-    public func fetchUsers() async {
-        do {
-            let request = SampleRequest(query: searchText)
-            let response = try await apiClient.send(request)
-            self.items = response.items
-        } catch {
-            self.errorMessage = error.localizedDescription
+    func fetchUsers() async {
+        let result = await apiClient.user(.init(query: searchText))
+        Task { @MainActor in
+            switch result {
+            case .success(let response):
+                self.items = response.items
+            case .failure(let error):
+                self.errorMessage = error.localizedDescription
+            }
         }
     }
 }
-
-
-
 

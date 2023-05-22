@@ -8,11 +8,11 @@ let package = Package(
         .iOS(.v16),
     ],
     products: [
-        .library(name: "Core", targets: ["Core"]),
+        .library(name: "APIClient", targets: ["APIClient"]),
     ],
     dependencies: [],
     targets: [
-        .target(name: "Core", dependencies: []),
-        .testTarget(name: "CoreTests", dependencies: ["Core"]),
+        .target(name: "APIClient", dependencies: []),
+        .testTarget(name: "APIClientTests", dependencies: ["APIClient"]),
     ]
 )

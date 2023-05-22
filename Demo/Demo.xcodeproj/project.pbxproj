@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		528A9F6B2A1B106800C3C1DA /* APIClient in Frameworks */ = {isa = PBXBuildFile; productRef = 528A9F6A2A1B106800C3C1DA /* APIClient */; };
 		52D9592429D93B7B00F4F631 /* DemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D9592329D93B7B00F4F631 /* DemoApp.swift */; };
 		52D9592629D93B7B00F4F631 /* SampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D9592529D93B7B00F4F631 /* SampleView.swift */; };
 		52D9592829D93B7C00F4F631 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 52D9592729D93B7C00F4F631 /* Assets.xcassets */; };
 		52D9592B29D93B7C00F4F631 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 52D9592A29D93B7C00F4F631 /* Preview Assets.xcassets */; };
 		52D9593529DD901600F4F631 /* SampleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D9593429DD901600F4F631 /* SampleModel.swift */; };
 		52D9593729DD904F00F4F631 /* SampleClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D9593629DD904F00F4F631 /* SampleClient.swift */; };
-		52D9593A29DD943200F4F631 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 52D9593929DD943200F4F631 /* Core */; };
 		52D9593C29DDA5C400F4F631 /* SampleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D9593B29DDA5C400F4F631 /* SampleViewModel.swift */; };
 /* End PBXBuildFile section */
 
@@ -34,7 +34,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				52D9593A29DD943200F4F631 /* Core in Frameworks */,
+				528A9F6B2A1B106800C3C1DA /* APIClient in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,7 +105,7 @@
 			);
 			name = Demo;
 			packageProductDependencies = (
-				52D9593929DD943200F4F631 /* Core */,
+				528A9F6A2A1B106800C3C1DA /* APIClient */,
 			);
 			productName = Demo;
 			productReference = 52D9592029D93B7B00F4F631 /* Demo.app */;
@@ -368,9 +368,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		52D9593929DD943200F4F631 /* Core */ = {
+		528A9F6A2A1B106800C3C1DA /* APIClient */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = Core;
+			productName = APIClient;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
