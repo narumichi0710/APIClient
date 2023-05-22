@@ -6,9 +6,9 @@ import Foundation
 
 // API通信用プロトコル
 public protocol APIClient {
-    var baseURL: URL { get }
-    var headerFields: [String: String] { get }
-    var session: URLSession { get }
+    var baseURL: URL { get set }
+    var headerFields: [String: String] { get set }
+    var session: URLSession { get set }
     func send<Request: APIRequest>(_ request: Request) async throws -> Request.Response
 }
 
