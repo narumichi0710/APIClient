@@ -35,26 +35,25 @@ extension APIRequest {
             let (data, response) = try await session.data(for: urlRequest)
 
             guard let httpResponse = response as? HTTPURLResponse else {
-                return .failure(APIError.noResponse)
+                throw APIError.noResponse
             }
-
-            guard 200..<300 ~= httpResponse.statusCode else {
-                let errorResponse = try? JSONDecoder().decode(APIError.Message.self, from: data)
-                debugPrint("API Error: \(String(describing: errorResponse?.message)) ErrorCode: \(httpResponse.statusCode)")
-                return .failure(APIError.serverError)
+            guard (200...299).contains(httpResponse.statusCode) else {
+                print("API Error: \(httpResponse)")
+                throw APIError.serverError("エラーコード: \(httpResponse.statusCode)")
             }
-
             let responseData = try decode(from: data)
             return .success(responseData)
-        } catch {
-            return .failure(APIError.other(error.localizedDescription))
+        } catch let error as APIError {
+            return .failure(error)
+        } catch let error {
+            return .failure(APIError.decodingError(error.localizedDescription))
         }
     }
     
     public func getUrlRequest() async throws -> URLRequest {
         let url = baseURL.appendingPathComponent(path)
         guard var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true) else {
-            throw APIError.serverError
+            throw APIError.invalidURL
         }
         if let queryParameters = queryParameters {
             urlComponents.queryItems = queryParameters.map {
@@ -62,7 +61,7 @@ extension APIRequest {
             }
         }
         guard let urlWithComponents = urlComponents.url else {
-            throw APIError.serverError
+            throw APIError.invalidURL
         }
         var urlRequest = URLRequest(url: urlWithComponents)
         urlRequest.httpMethod = method.rawValue
