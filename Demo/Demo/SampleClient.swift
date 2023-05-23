@@ -24,8 +24,8 @@ public struct SampleRequest: CommonRequest {
     public var path: String { "/search/users" }
     public var queryParameters: [String: String]?
 
-    public init(query: String) {
-        self.queryParameters = ["q": query]
+    public init(query: [String: String]) {
+        self.queryParameters = query
     }
 }
 

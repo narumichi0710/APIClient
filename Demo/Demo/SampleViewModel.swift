@@ -21,14 +21,16 @@ public class SampleViewModel: ObservableObject {
         self.apiClient = apiClient
     }
     
-    func fetchUsers() async {
-        let result = await apiClient.user(.init(query: searchText))
+    func fetchUsers(isFail: Bool = false) async {
+        // APIエラー確認のため、意図的にkeyを変更
+        let key = isFail ? "hogehoge" : "q"
+        let result = await apiClient.user(.init(query: [key: "abc"]))
         Task { @MainActor in
             switch result {
             case .success(let response):
                 self.items = response.items
             case .failure(let error):
-                self.errorMessage = error.localizedDescription
+                self.errorMessage = error.localize
             }
         }
     }

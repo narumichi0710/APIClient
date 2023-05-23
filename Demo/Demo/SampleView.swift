@@ -30,6 +30,25 @@ public struct SampleView: View {
                 .listStyle(.inset)
             }
             Spacer()
+            
+            
+            HStack {
+                Button("Check API") {
+                    viewModel.errorMessage = nil
+                    Task {
+                        await viewModel.fetchUsers(isFail: false)
+                    }
+                }
+                .buttonStyle(.bordered)
+
+                Button("Fail API on purpose") {
+                    Task {
+                        await viewModel.fetchUsers(isFail: true)
+                    }
+                }
+                .buttonStyle(.bordered)
+            }
+            .padding(.bottom, 16.0)
         }
     }
 }
