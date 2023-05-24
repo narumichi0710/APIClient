@@ -41,7 +41,7 @@ public enum APIError: Error {
             case .valueNotFound(let type, let context):
                 text = "'\(type)' が見つかりません。\(context.debugDescription)"
             @unknown default:
-                text = ""
+                text = "unknown error"
             }
             return "データの変換に失敗しました。\n開発者確認用エラー内容:\n\(text)"
         case .otherError(let error):
