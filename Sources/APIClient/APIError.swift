@@ -19,11 +19,11 @@ public enum APIError: Error {
     public var localize: String? {
         switch self {
         case .invalidURL:
-            return "無効なURLです"
+            return "無効なURLです。"
         case .missingAccessToken:
-            return "アクセストークンがありません"
+            return "アクセストークンがありません。"
         case .unavailableAuthSession:
-            return "認証に失敗しました"
+            return "認証に失敗しました。"
         case .noResponse:
             return "サーバーからの応答がありません。少し時間を置いてからアクセスしてください。"
         case .serverError(let text):
@@ -37,11 +37,11 @@ public enum APIError: Error {
             case .keyNotFound(let key, let context):
                 text = "'\(key)'が見つかりません。\(context.debugDescription)"
             case .typeMismatch(let type, let context):
-                text = "'\(type)' が一致しません。\(context.debugDescription)"
+                text = "'\(type)'が一致しません。\(context.debugDescription)"
             case .valueNotFound(let type, let context):
-                text = "'\(type)' が見つかりません。\(context.debugDescription)"
+                text = "'\(type)'が見つかりません。\(context.debugDescription)"
             @unknown default:
-                text = "unknown error"
+                text = "unknown error."
             }
             return "データの変換に失敗しました。\n詳細: \(text)"
         case .otherError(let error):
