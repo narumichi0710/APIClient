@@ -43,7 +43,7 @@ public enum APIError: Error {
             @unknown default:
                 text = "unknown error"
             }
-            return "データの変換に失敗しました。\n開発者確認用エラー内容:\n\(text)"
+            return "データの変換に失敗しました。\n詳細: \(text)"
         case .otherError(let error):
             return "予期せぬエラーが発生しました。\n\(error.localizedDescription)"
         }
