@@ -44,8 +44,10 @@ extension APIRequest {
             return .success(responseData)
         } catch let error as APIError {
             return .failure(error)
+        } catch let error as DecodingError {
+            return .failure(.decodingError(error))
         } catch let error {
-            return .failure(APIError.decodingError(error.localizedDescription))
+            return .failure(.otherError(error))
         }
     }
     
