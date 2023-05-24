@@ -38,7 +38,6 @@ extension APIRequest {
                 throw APIError.noResponse
             }
             guard (200...299).contains(httpResponse.statusCode) else {
-                print("API Error: \(httpResponse)")
                 throw APIError.serverError("エラーコード: \(httpResponse.statusCode)")
             }
             let responseData = try decode(from: data)
@@ -73,7 +72,8 @@ extension APIRequest {
         for (field, value) in headerFields {
             urlRequest.addValue(value, forHTTPHeaderField: field)
         }
-        debugPrint("API Request: \(urlRequest)")
+
+        debugPrint("API Request: \(urlRequest.httpMethod!) \(urlRequest.url!) \(urlRequest.allHTTPHeaderFields!)")
         return urlRequest
     }
     
