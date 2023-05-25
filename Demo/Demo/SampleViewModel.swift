@@ -25,7 +25,7 @@ public class SampleViewModel: ObservableObject {
         // APIエラー確認のため、意図的にkeyを変更
         let key = isFail ? "hogehoge" : "q"
         let result = await apiClient.user(.init(query: [key: "abc"]))
-        Task { @MainActor in
+        await MainActor.run {
             switch result {
             case .success(let response):
                 self.items = response.items

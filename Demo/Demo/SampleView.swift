@@ -6,21 +6,49 @@
 //
 
 import SwiftUI
+import APIClient
 
-public struct SampleView: View {
+public struct SampleRootView: View {
+    @StateObject var apiState: APIStates
     @StateObject private var viewModel: SampleViewModel
     
-    public init(viewModel: SampleViewModel = .init(apiClient: .live)) {
+    public init(
+        apiState: APIStates = .shared,
+        viewModel: SampleViewModel = .init(apiClient: .live)
+    ) {
+        _apiState = .init(wrappedValue: apiState)
         _viewModel = .init(wrappedValue: viewModel)
     }
     
     public var body: some View {
-        VStack {
-            SearchBar(text: $viewModel.searchText) {
-                Task {
-                    await viewModel.fetchUsers()
+        ZStack {
+            VStack {
+                SearchBar(text: $viewModel.searchText) {
+                    Task {
+                        await viewModel.fetchUsers()
+                    }
                 }
+                SampleSubView(viewModel: viewModel)
             }
+            
+            DefaultProgressBar()
+                .environmentObject(apiState)
+            DefaultStatusCover()
+                .environmentObject(apiState)
+        }
+    }
+
+}
+
+public struct SampleSubView: View {
+    @ObservedObject private var viewModel: SampleViewModel
+    
+    public init(viewModel: SampleViewModel) {
+        self.viewModel = viewModel
+    }
+    
+    public var body: some View {
+        VStack {
             if let errorMessage = viewModel.errorMessage {
                 Text(errorMessage)
             } else {
@@ -30,8 +58,6 @@ public struct SampleView: View {
                 .listStyle(.inset)
             }
             Spacer()
-            
-            
             HStack {
                 Button("Check API") {
                     viewModel.errorMessage = nil
@@ -40,7 +66,7 @@ public struct SampleView: View {
                     }
                 }
                 .buttonStyle(.bordered)
-
+                
                 Button("Fail API on purpose") {
                     Task {
                         await viewModel.fetchUsers(isFail: true)
@@ -55,8 +81,8 @@ public struct SampleView: View {
 
 
 public struct SearchBar: View {
-    @Binding var text: String
-    var onSearchButtonClicked: () -> Void
+    @Binding private var text: String
+    private var onSearchButtonClicked: () -> Void
     
     public init(
         text: Binding<String>,
