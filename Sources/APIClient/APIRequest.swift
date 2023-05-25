@@ -28,12 +28,26 @@ extension APIRequest {
 }
 
 extension APIRequest {
-        
+    
+    // FIXME: もう少し良い書き方あるかも
+    public func sendWithProgress() async -> Result<Response, APIError> {
+        await MainActor.run {
+            if !APIStates.shared.isRequestInProgress {
+                APIStates.shared.update()
+            }
+        }
+        let result = await send()
+        await MainActor.run {
+            APIStates.shared.update()
+        }
+        return result
+    }
+    
     public func send() async -> Result<Response, APIError> {
         do {
+            APIStates.shared.start()
             let urlRequest = try await getUrlRequest()
             let (data, response) = try await session.data(for: urlRequest)
-
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw APIError.noResponse
             }
@@ -41,13 +55,13 @@ extension APIRequest {
                 throw APIError.serverError("エラーコード: \(httpResponse.statusCode)")
             }
             let responseData = try decode(from: data)
-            return .success(responseData)
+            return finishedRequest(.success(responseData))
         } catch let error as APIError {
-            return .failure(error)
+            return finishedRequest(.failure(error))
         } catch let error as DecodingError {
-            return .failure(.decodingError(error))
+            return finishedRequest(.failure(.decodingError(error)))
         } catch let error {
-            return .failure(.otherError(error))
+            return finishedRequest(.failure(.otherError(error)))
         }
     }
     
@@ -77,6 +91,17 @@ extension APIRequest {
 
         debugPrint("API Request: \(urlRequest.httpMethod!) \(urlRequest.url!) \(urlRequest.allHTTPHeaderFields!)")
         return urlRequest
+    }
+    
+    private func finishedRequest(_ result: Result<Response, APIError>) -> Result<Response, APIError> {
+        switch result {
+        case .success:
+            APIStates.shared.finish()
+            return result
+        case .failure(let error):
+            APIStates.shared.finish(error)
+            return result
+        }
     }
     
     public func decode(from data: Data) throws -> Response {

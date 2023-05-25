@@ -13,8 +13,8 @@ public struct SampleClient {
 }
 
 public extension SampleClient {
-    static var live = SampleClient { request in
-        await request.send()
+    static var live = SampleClient {
+        await $0.sendWithProgress()
     }
 }
 
