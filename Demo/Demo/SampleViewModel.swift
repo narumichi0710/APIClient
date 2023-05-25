@@ -12,7 +12,6 @@ public class SampleViewModel: ObservableObject {
     
     @Published public var items = [SampleItem]()
     @Published public var searchText: String = ""
-    @Published public var errorMessage: String?
     
     public init(
         searchText: String = "",
@@ -23,14 +22,14 @@ public class SampleViewModel: ObservableObject {
     
     func fetchUsers(isFail: Bool = false) async {
         // APIエラー確認のため、意図的にkeyを変更
-        let key = isFail ? "hogehoge" : "q"
-        let result = await apiClient.user(.init(query: [key: "abc"]))
+        let keyValue = isFail ? ["hoge": "fuga"] : ["q": searchText]
+        let result = await apiClient.user(.init(keyValue))
         await MainActor.run {
             switch result {
             case .success(let response):
                 self.items = response.items
-            case .failure(let error):
-                self.errorMessage = error.localize
+            case .failure(_):
+                break
             }
         }
     }

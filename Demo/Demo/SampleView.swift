@@ -49,19 +49,16 @@ public struct SampleSubView: View {
     
     public var body: some View {
         VStack {
-            if let errorMessage = viewModel.errorMessage {
-                Text(errorMessage)
-            } else {
-                List(viewModel.items) { item in
-                    Text(item.login)
-                }
-                .listStyle(.inset)
+            List(viewModel.items) { item in
+                Text(item.login)
             }
+            .listStyle(.inset)
+            
             Spacer()
             HStack {
                 Button("Check API") {
-                    viewModel.errorMessage = nil
                     Task {
+                        viewModel.searchText = String("aiueo".randomElement()!)
                         await viewModel.fetchUsers(isFail: false)
                     }
                 }
