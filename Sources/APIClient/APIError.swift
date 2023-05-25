@@ -16,7 +16,7 @@ public enum APIError: Error {
     case decodingError(DecodingError)
     case otherError(Error)
 
-    public var localize: String? {
+    public var localize: String {
         switch self {
         case .invalidURL:
             return "無効なURLです。"
@@ -33,17 +33,17 @@ public enum APIError: Error {
             let text: String
             switch error {
             case .dataCorrupted(let context):
-                text = "データが破損しています。\(context.debugDescription)"
+                text = "データが破損しています。\n\(context.debugDescription)"
             case .keyNotFound(let key, let context):
-                text = "'\(key)'が見つかりません。\(context.debugDescription)"
+                text = "'\(key)'が見つかりません。\n\(context.debugDescription)"
             case .typeMismatch(let type, let context):
-                text = "'\(type)'が一致しません。\(context.debugDescription)"
+                text = "'\(type)'が一致しません。\n\(context.debugDescription)"
             case .valueNotFound(let type, let context):
-                text = "'\(type)'が見つかりません。\(context.debugDescription)"
+                text = "'\(type)'が見つかりません。\n\(context.debugDescription)"
             @unknown default:
                 text = "unknown error."
             }
-            return "データの変換に失敗しました。\n詳細: \(text)"
+            return "データの変換に失敗しました。\n\(text)"
         case .otherError(let error):
             return "予期せぬエラーが発生しました。\n\(error.localizedDescription)"
         }
