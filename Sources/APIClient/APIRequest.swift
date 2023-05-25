@@ -89,7 +89,7 @@ extension APIRequest {
             urlRequest.addValue(value, forHTTPHeaderField: field)
         }
 
-        debugPrint("API Request: \(urlRequest.httpMethod!) \(urlRequest.url!) \(urlRequest.allHTTPHeaderFields!)")
+        debugPrint("API Request: \(urlRequest.httpMethod!) \(urlRequest.url!) \(urlRequest.allHTTPHeaderFields!) \(String(describing: urlRequest.httpBody))")
         return urlRequest
     }
     
