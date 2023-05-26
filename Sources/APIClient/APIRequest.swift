@@ -46,14 +46,18 @@ extension APIRequest {
     public func send() async -> Result<Response, APIError> {
         do {
             APIStates.shared.start()
+            
             let urlRequest = try await getUrlRequest()
             let (data, response) = try await session.data(for: urlRequest)
+            
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw APIError.noResponse
             }
+            
             guard (200...299).contains(httpResponse.statusCode) else {
                 throw APIError.serverError("エラーコード: \(httpResponse.statusCode)")
             }
+            
             let responseData = try decode(from: data)
             return finishedRequest(.success(responseData))
         } catch let error as APIError {
@@ -67,13 +71,12 @@ extension APIRequest {
     
     public func getUrlRequest() async throws -> URLRequest {
         let url = baseURL.appendingPathComponent(path)
+        
         guard var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true) else {
             throw APIError.invalidURL
         }
         if let queryParameters = queryParameters {
-            urlComponents.queryItems = queryParameters.map {
-                URLQueryItem(name: $0.key, value: $0.value)
-            }
+            urlComponents.queryItems = queryParameters.map { URLQueryItem(name: $0.key, value: $0.value) }
         }
         guard let urlWithComponents = urlComponents.url else {
             throw APIError.invalidURL
@@ -81,15 +84,22 @@ extension APIRequest {
         var urlRequest = URLRequest(url: urlWithComponents)
         urlRequest.httpMethod = method.rawValue
         
+        var bodyLog = String()
         if let body = body {
-            urlRequest.httpBody = try JSONEncoder().encode(body)
-            urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            let httpBody = try JSONEncoder().encode(body)
+            urlRequest.httpBody = httpBody
+            urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            bodyLog.append("\(String(data: httpBody, encoding: .utf8).toString)")
         }
-        for (field, value) in headerFields {
-            urlRequest.addValue(value, forHTTPHeaderField: field)
+        
+        if !headerFields.isEmpty {
+            for (field, value) in headerFields {
+                urlRequest.addValue(value, forHTTPHeaderField: field)
+            }
         }
-
-        debugPrint("API Request: \(urlRequest.httpMethod!) \(urlRequest.url!) \(urlRequest.allHTTPHeaderFields!) \(String(describing: urlRequest.httpBody))")
+        
+        debugPrint("API Request: \(urlRequest.httpMethod.toString) \(urlRequest.url.toString) \(urlRequest.allHTTPHeaderFields.toString) \((bodyLog))")
+        
         return urlRequest
     }
     
@@ -105,6 +115,23 @@ extension APIRequest {
     }
     
     public func decode(from data: Data) throws -> Response {
-        return try JSONDecoder().decode(Response.self, from: data)
+        try JSONDecoder().decode(Response.self, from: data)
+    }
+}
+
+public struct EmptyBody: Encodable {
+    public init() {}
+}
+
+public struct EmptyResponse: Decodable {
+    public init() {}
+}
+
+extension Optional {
+    var toString: String {
+        if let self {
+            return "\(self)"
+        }
+        return ""
     }
 }
