@@ -59,13 +59,13 @@ extension APIRequest {
             }
             
             let responseData = try decode(from: data)
-            return finishedRequest(.success(responseData))
+            return handleResult(.success(responseData))
         } catch let error as APIError {
-            return finishedRequest(.failure(error))
+            return handleResult(.failure(error))
         } catch let error as DecodingError {
-            return finishedRequest(.failure(.decodingError(error)))
+            return handleResult(.failure(.decodingError(error)))
         } catch let error {
-            return finishedRequest(.failure(.otherError(error)))
+            return handleResult(.failure(.otherError(error)))
         }
     }
     
@@ -99,11 +99,11 @@ extension APIRequest {
         }
         
         debugPrint("API Request: \(urlRequest.httpMethod.toString) \(urlRequest.url.toString) \(urlRequest.allHTTPHeaderFields.toString) \((bodyLog))")
-        
         return urlRequest
     }
     
-    private func finishedRequest(_ result: Result<Response, APIError>) -> Result<Response, APIError> {
+    private func handleResult(_ result: Result<Response, APIError>) -> Result<Response, APIError> {
+        debugPrint("Response: \(result)")
         switch result {
         case .success:
             APIStates.shared.finish()
